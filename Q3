@@ -1,0 +1,38 @@
+--nao conseguir finalizar direito--
+create or replace function atualizar_total_funcionarios_inserir()
+returns trigger as $$
+begin
+	update setores
+	set total_funcionarios_trigger = (select count(*) from empregados where setor_id = new.setor_id)
+	where id = new.setor_id;
+	return new;
+end;
+$$ language plpgsql;
+	
+end;
+
+create or replace function total_funcionarios_delete()
+returns trigger as $$
+begin
+	update setores
+	set total_funcionarios_trigger = (select count(*) from empregados where setor_id = old.setor_id)
+	where id = old.setor_id;
+return old;
+end;
+$$ language plpgsql;
+end;
+
+create  trigger atualizar_total_funcionarios_inserir_trigger
+after insert or delete on empregados for each row
+execute function alizar_total_funcionarios_inserir_trigger();
+
+create  trigger total_funcionarios_delete_trigger
+after delete on empregados for each row
+execute function total_funcionarios_delete_trigger();
+
+select * from empregados
+
+
+delete from empregados where nome = 'Arthur';
+
+select * from setores;
