@@ -1,0 +1,14 @@
+create or replace function total_Funcionarios_trigger()
+returns trigger as $$
+begin
+	New.total_Funcionarios = 0;
+	return New;
+end;
+$$ language plpgsql;
+
+create  trigger total_Funcionarios_trigger
+before insert on setores for each row
+execute function total_Funcionarios_trigger();
+
+INSERT INTO setores (setor, total_funcionarios) VALUES ('farmacia', 100);
+SELECT * FROM setores WHERE setor = 'farmacia';
