@@ -1,0 +1,56 @@
+-- usei gpt para me auxiliar em algumas partes que tive dificuldade --
+create or replace function log_insert_empregado()
+returns trigger as $$
+begin
+    insert into logs_insert_empregados (empregado_id, usuario, operacao, data_operacao)
+    values (new.id, user, 'inserindo o usuario',now());
+    return new;
+end;
+$$ language plpgsql;
+
+
+
+
+create or replace function log_update_empregado()
+returns trigger as $$
+begin
+    insert into logs_empregados (empregado_id, usuario, operacao, data_operacao)
+    values (new.id, user, 'atualizando o usuario',now());
+    return new;
+end;
+$$ language plpgsql;
+
+
+
+create or replace function log_delete_empregado()
+returns trigger as $$
+begin
+    insert into logs_empregados (empregado_id, usuario, operacao, data_operacao)
+    values (old.id, user, 'deletando o usuario',now());
+    return old;
+end;
+$$ language plpgsql;
+
+create trigger log_insert
+after insert on empregados
+for each row
+execute function log_insert_empregado();
+
+create trigger log_update
+after update on empregados
+for each row
+execute function log_update_empregado();
+
+create trigger log_delete
+after delete on empregados
+for each row
+execute function log_delete_empregado();
+
+insert into empregados (nome, salario, setor_id) values ('julio', 2000, 1);
+
+update empregados set salario = 3000 where nome = 'julio';
+
+delete from empregados where nome = 'julio';
+
+select * from logs_empregados;
+
