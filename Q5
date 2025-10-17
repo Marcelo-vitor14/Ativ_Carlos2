@@ -1,0 +1,25 @@
+create or replace function bloquear_nome_do_usuario()
+returns trigger as $$
+begin
+   
+    if new.nome_usuario != old.nome_usuario then
+        raise exception 'não e possivel  alterar o nome do usuario!';
+   end if;
+  		return new;
+end;
+$$ language plpgsql;
+
+
+create trigger bloquear_nome
+before update on logs_empregados
+for each row
+execute function bloquear_nome_do_usuario();
+
+
+
+update logs_empregados
+set usuario = 'alberto'
+where empregado_id = 1;
+
+select * from empregados
+	
