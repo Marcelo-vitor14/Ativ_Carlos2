@@ -1,0 +1,23 @@
+create or replace function validar_salario_trigger()
+	returns trigger as $$
+	begin
+		if new.salario < 937 then
+		new.salario =937;
+		elsif new.salario > 10000 then
+		new.salario = 10000;
+	end if;
+	return new;
+end;
+$$language plpgsql;
+	
+create  trigger validar_salario_trigger
+before insert or update on empregados for each row
+execute function validar_salario_trigger();
+
+insert into empregados(nome,salario,setor_id)
+values('carlos',500,1);
+insert into empregados(nome,salario,setor_id)
+values('marcio',20000,2);
+
+
+select nome,salario from empregados where nome in('carlos','marcio');
